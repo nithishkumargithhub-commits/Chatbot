@@ -1,0 +1,10 @@
+.git
+.gitignore
+frontend/
+temp_audio/
+*.pdf
+tests/
+__pycache__/
+*.pyc
+*.md
+.pytest_cache/

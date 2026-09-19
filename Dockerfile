@@ -21,17 +21,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
 
-# Install application dependencies (compatible with both root context and backend context)
-COPY requirements.txt* backend/requirements.txt* ./
+# Copy requirements from backend
+COPY backend/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Pre-download Whisper base model at build time for instant container startup
 RUN python -c "from faster_whisper import WhisperModel; WhisperModel('base', device='cpu', compute_type='int8')"
 
-# Copy codebase
-COPY . .
-# Handle root context if backend folder was copied
-RUN if [ -d "backend" ]; then cp -r backend/* . && rm -rf backend frontend; fi
+# Copy backend codebase
+COPY backend/ .
 
 # Expose port
 EXPOSE 8000
