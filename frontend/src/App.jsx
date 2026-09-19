@@ -16,11 +16,12 @@ import {
   Radio,
 } from 'lucide-react';
 
-// Backend URL: empty string in dev (Vite proxy handles it),
-// set to ngrok/cloud URL via VITE_BACKEND_URL in Vercel env vars.
-const BACKEND = (typeof __BACKEND_URL__ !== 'undefined' && __BACKEND_URL__ !== 'http://127.0.0.1:8000')
-  ? __BACKEND_URL__
-  : '';
+// Backend URL: Supports import.meta.env (Vite standard) or build-time define
+const RAW_BACKEND = (
+  (import.meta.env?.VITE_BACKEND_URL || import.meta.env?.VITE_API_URL || '') ||
+  (typeof __BACKEND_URL__ !== 'undefined' && __BACKEND_URL__ !== 'http://127.0.0.1:8000' ? __BACKEND_URL__ : '')
+);
+const BACKEND = RAW_BACKEND.replace(/\/+$/, '');
 
 const LANGUAGE_META = {
   ta: { flag: '🇮🇳', name: 'Tamil (தமிழ்)', speechLang: 'ta-IN' },
@@ -607,7 +608,13 @@ export default function App() {
         speakToUser(advice, resolvedLang);
       }
     } catch (err) {
-      setErrorMsg(err.message || 'Failed to process voice request.');
+      console.error('Audio processing error:', err);
+      const isNetworkErr = err.message === 'Failed to fetch' || err.name === 'TypeError';
+      setErrorMsg(
+        isNetworkErr
+          ? `Cannot connect to backend (${BACKEND || 'not configured'}). If using Render free tier, please wait 30s for it to wake up from sleep, then try again!`
+          : (err.message || 'Failed to process voice request.')
+      );
     } finally {
       setIsProcessing(false);
     }
