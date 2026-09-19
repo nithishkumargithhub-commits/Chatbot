@@ -1,9 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// VITE_BACKEND_URL is set in Vercel environment variables.
+// VITE_BACKEND_URL or VITE_API_URL is set in Vercel environment variables.
 // In local dev, the proxy below handles /api and /health automatically.
-const BACKEND_URL = process.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000';
+const BACKEND_URL = process.env.VITE_BACKEND_URL || process.env.VITE_API_URL || 'http://127.0.0.1:8000';
 
 export default defineConfig({
   plugins: [react()],

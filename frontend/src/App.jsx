@@ -359,7 +359,9 @@ export default function App() {
   // Check Backend Health
   const checkHealth = async () => {
     try {
-      const res = await fetch(`${BACKEND}/health`);
+      const res = await fetch(`${BACKEND}/health`, {
+        headers: { 'ngrok-skip-browser-warning': 'true' },
+      });
       if (res.ok) {
         const data = await res.json();
         setServerHealth(data);
@@ -560,6 +562,7 @@ export default function App() {
     try {
       const res = await fetch(`${BACKEND}/api/voice/transcribe`, {
         method: 'POST',
+        headers: { 'ngrok-skip-browser-warning': 'true' },
         body: formData,
       });
 
