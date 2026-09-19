@@ -5,6 +5,7 @@ Single source of truth for all backend settings.
 Change model size, device preference, or add languages here — nowhere else.
 """
 
+import os
 import torch
 
 # ---------------------------------------------------------------------------
@@ -12,9 +13,12 @@ import torch
 # ---------------------------------------------------------------------------
 
 # Model size: "tiny" | "base" | "small" | "medium" | "large-v2" | "large-v3"
-# "large-v3" gives the best Indian language accuracy on GPU (RTX 5070 / CUDA).
-# Falls back gracefully: swap to "medium" if VRAM is constrained (<6 GB).
-WHISPER_MODEL_SIZE: str = "large-v3"
+# Automatically uses "large-v3" when CUDA GPU is available (local PC).
+# Falls back to "base" on CPU (cloud hosting like Render to fit 512MB RAM).
+WHISPER_MODEL_SIZE: str = os.getenv(
+    "WHISPER_MODEL_SIZE",
+    "large-v3" if torch.cuda.is_available() else "base"
+)
 
 # ---------------------------------------------------------------------------
 # Device Configuration

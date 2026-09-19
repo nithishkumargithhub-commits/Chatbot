@@ -96,7 +96,7 @@ class Settings(BaseSettings):
 
     stt_model_size: Literal[
         "tiny", "base", "small", "medium", "large-v2", "large-v3"
-    ] = "large-v3"
+    ] = Field(default_factory=lambda: "large-v3" if torch.cuda.is_available() else "base")
 
     # "float16" on modern CUDA GPUs; "int8" for CPU / low-VRAM
     stt_compute_type: str = Field(

@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: jeevanpath-backend
+    env: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
+    plan: free
+    region: singapore
+    healthCheckPath: /health
+    envVars:
+      - key: DEVICE
+        value: cpu
+      - key: WHISPER_MODEL_SIZE
+        value: base
+      - key: COMPUTE_TYPE
+        value: int8
