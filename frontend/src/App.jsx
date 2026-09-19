@@ -16,6 +16,12 @@ import {
   Radio,
 } from 'lucide-react';
 
+// Backend URL: empty string in dev (Vite proxy handles it),
+// set to ngrok/cloud URL via VITE_BACKEND_URL in Vercel env vars.
+const BACKEND = (typeof __BACKEND_URL__ !== 'undefined' && __BACKEND_URL__ !== 'http://127.0.0.1:8000')
+  ? __BACKEND_URL__
+  : '';
+
 const LANGUAGE_META = {
   ta: { flag: '🇮🇳', name: 'Tamil (தமிழ்)', speechLang: 'ta-IN' },
   te: { flag: '🇮🇳', name: 'Telugu (తెలుగు)', speechLang: 'te-IN' },
@@ -353,7 +359,7 @@ export default function App() {
   // Check Backend Health
   const checkHealth = async () => {
     try {
-      const res = await fetch('/health');
+      const res = await fetch(`${BACKEND}/health`);
       if (res.ok) {
         const data = await res.json();
         setServerHealth(data);
@@ -448,7 +454,7 @@ export default function App() {
 
     // 1. Play native Indic speech stream from FastAPI backend (/api/voice/synthesize)
     try {
-      const audioUrl = `/api/voice/synthesize?text=${encodeURIComponent(textToSpeak)}&language=${encodeURIComponent(targetLang)}`;
+      const audioUrl = `${BACKEND}/api/voice/synthesize?text=${encodeURIComponent(textToSpeak)}&language=${encodeURIComponent(targetLang)}`;
       const audio = new Audio(audioUrl);
       audioPlayerRef.current = audio;
 
@@ -552,7 +558,7 @@ export default function App() {
     }
 
     try {
-      const res = await fetch('/api/voice/transcribe', {
+      const res = await fetch(`${BACKEND}/api/voice/transcribe`, {
         method: 'POST',
         body: formData,
       });
