@@ -1,0 +1,47 @@
+# =============================================================================
+# JeevanPath AI — Docker Compose: Database Services
+# =============================================================================
+# Spins up ONLY the PostgreSQL + pgvector service for local development.
+# The FastAPI backend runs natively (not in a container) for easy hot-reload.
+#
+# Usage:
+#   docker compose up -d db         # start DB in background
+#   docker compose logs -f db        # watch DB logs
+#   docker compose down              # stop and remove containers (data preserved)
+#   docker compose down -v           # stop AND delete the data volume
+#
+# After the first start, initialise the DB:
+#   psql postgresql://jeevanpath:jeevanpath@localhost:5432/jeevanpath \
+#       -c "CREATE EXTENSION IF NOT EXISTS vector;"
+#   alembic upgrade head
+# =============================================================================
+
+version: "3.9"
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL 16 with pgvector extension
+  # ---------------------------------------------------------------------------
+  db:
+    image: pgvector/pgvector:pg16        # Official pgvector image (includes the extension)
+    container_name: jeevanpath_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: jeevanpath
+      POSTGRES_PASSWORD: jeevanpath      # Change in production!
+      POSTGRES_DB: jeevanpath
+    ports:
+      - "5432:5432"                      # Expose to host so native FastAPI can connect
+    volumes:
+      - jeevanpath_pgdata:/var/lib/postgresql/data
+      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jeevanpath -d jeevanpath"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  jeevanpath_pgdata:
+    driver: local

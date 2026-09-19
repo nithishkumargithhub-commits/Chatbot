@@ -1,0 +1,61 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Environment / Secrets
+.env
+.env.*
+!.env.example
+
+# Model weights (too large for git)
+backend/models/
+*.bin
+*.pt
+*.pth
+*.onnx
+*.safetensors
+
+# Embeddings & large data
+backend/data/embeddings.npy
+backend/data/raw_ocr.json
+
+# Temp audio
+temp_audio/
+backend/temp_audio/
+*.webm
+*.wav
+*.mp3
+*.ogg
+*.m4a
+*.aac
+*.flac
+
+# Node / Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Misc
+*.pdf
