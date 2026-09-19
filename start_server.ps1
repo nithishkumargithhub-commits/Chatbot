@@ -1,4 +1,4 @@
-﻿# ============================================================
+# ============================================================
 # JeevanPath AI — One-Click Server Startup Script
 # Starts FastAPI backend + ngrok tunnel
 # Run this on your PC before sharing the Vercel URL
